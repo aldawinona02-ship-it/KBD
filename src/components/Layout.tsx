@@ -316,11 +316,12 @@ function Copilot() {
        const errorMessage = error.message || String(error);
        
        // Proactive simulated fallback if API is unavailable, key is leaked, or invalid
-       const isApiError = errorMessage.includes('leaked') || 
+       const isApiError = errorMessage.toLowerCase().includes('leaked') || 
                           errorMessage.includes('403') || 
                           errorMessage.includes('404') ||
                           errorMessage.includes('400') ||
-                          errorMessage.includes('not valid') ||
+                          errorMessage.toLowerCase().includes('not valid') ||
+                          errorMessage.toLowerCase().includes('api key') ||
                           errorMessage.includes('INVALID_ARGUMENT');
 
        if (isApiError) {
