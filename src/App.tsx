@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import UBIDExplorer from './pages/UBIDExplorer';
@@ -14,7 +14,7 @@ import { PlatformProvider } from './context/PlatformContext';
 export default function App() {
   return (
     <PlatformProvider>
-      <BrowserRouter>
+      <HashRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<UBIDAssignmentCenter />} />
@@ -27,7 +27,7 @@ export default function App() {
             <Route path="governance" element={<GovernanceConsole />} />
           </Route>
         </Routes>
-      </BrowserRouter>
+      </HashRouter>
     </PlatformProvider>
   );
 }
