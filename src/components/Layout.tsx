@@ -278,10 +278,13 @@ function Copilot() {
       // Implement robust retry logic for 503/429 errors
       let response;
       let lastError;
+      const modelId = "gemini-1.5-flash-latest"; 
+      
       for (let i = 0; i < 5; i++) {
         try {
+          console.log(`KBDT Assistant: Sending request (attempt ${i + 1}) to model: ${modelId}`);
           response = await getAI().models.generateContent({
-            model: "gemini-3-flash",
+            model: modelId,
             contents: [{ role: 'user', parts: [{ text: currentMessage }] }],
             config: {
               systemInstruction: systemInstruction
@@ -290,9 +293,15 @@ function Copilot() {
           if (response) break;
         } catch (err: any) {
           lastError = err;
-          const isRetryable = err.message?.includes('503') || err.message?.includes('429') || err.message?.includes('high demand') || err.message?.includes('quota');
+          const errorMessage = err.message || String(err);
+          const isRetryable = errorMessage.includes('503') || 
+                             errorMessage.includes('429') || 
+                             errorMessage.includes('high demand') || 
+                             errorMessage.includes('quota') ||
+                             errorMessage.includes('capacity');
+          
           if (isRetryable && i < 4) {
-            console.warn(`Gemini Retry ${i + 1} due to:`, err.message);
+            console.warn(`Gemini Retry ${i + 1} due to:`, errorMessage);
             await new Promise(resolve => setTimeout(resolve, 2000 * (i + 1)));
             continue;
           }
@@ -304,7 +313,32 @@ function Copilot() {
       setChatHistory(prev => [...prev, { role: 'assistant', text: responseText }]);
     } catch (error: any) {
        console.error("Gemini Error:", error);
-       setChatHistory(prev => [...prev, { role: 'assistant', text: `Sorry, I encountered an error: ${error.message || String(error)}` }]);
+       const errorMessage = error.message || String(error);
+       
+       // Proactive simulated fallback if API is unavailable or key is leaked
+       if (errorMessage.includes('leaked') || errorMessage.includes('403') || errorMessage.includes('404')) {
+         console.warn("KBDT: API Issue detected. Switching to Simulated Analyst Mode.");
+         
+         const simulatedResponses: Record<string, string> = {
+           "hello": "Hello! I am the KBDT Analyst Copilot (Simulated Mode). How can I help you with business data today?",
+           "peenya": "Peenya Industrial Hub shows a high concentration of UBIDs due to its status as one of the largest industrial estates in Southeast Asia. We are currently tracking 3,109 pending license renewals in this sector.",
+           "risk": "Based on current data trends, we see a 12% increase in GSTIN collisions in the Bengaluru Urban district. I recommend focusing on the Peenya hub for manual audit.",
+           "default": "I'm currently operating in Simulated Mode due to an API connectivity issue. \n\nBased on the KBDT Dashboard context: \n- **Active UBIDs**: 1,248,592 \n- **Critical Alerts**: 124 \n- **Recommendation**: Audit the recent candidate merge RV-101 for Peenya Tools Ltd."
+         };
+         
+         let fallbackText = simulatedResponses.default;
+         const lowerMsg = currentMessage.toLowerCase();
+         if (lowerMsg.includes("hello") || lowerMsg.includes("hi")) fallbackText = simulatedResponses.hello;
+         else if (lowerMsg.includes("peenya")) fallbackText = simulatedResponses.peenya;
+         else if (lowerMsg.includes("risk") || lowerMsg.includes("anomaly")) fallbackText = simulatedResponses.risk;
+         
+         setChatHistory(prev => [...prev, { 
+           role: 'assistant', 
+           text: `**[SIMULATED MODE]** ${fallbackText}\n\n*Note: Your API key appears to be flagged as leaked or invalid. Please update it in the AI Studio Secrets panel.*` 
+         }]);
+       } else {
+         setChatHistory(prev => [...prev, { role: 'assistant', text: `Sorry, I encountered an error: ${errorMessage}` }]);
+       }
     } finally {
       setIsLoading(false);
     }
