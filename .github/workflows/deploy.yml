@@ -24,16 +24,17 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
-          cache: "npm"
+          node-version: "20"
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          rm -f package-lock.json
+          npm install
 
       - name: Build
         env:
-          VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
+          VITE_GEMINI_API_KEY: AIzaSyC3XbrftIzorkru-sBohevFNXTca_SR6-M
+          GEMINI_API_KEY: AIzaSyC3XbrftIzorkru-sBohevFNXTca_SR6-M
         run: npm run build
 
       - name: Setup Pages
