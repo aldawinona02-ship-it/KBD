@@ -281,7 +281,7 @@ function Copilot() {
       for (let i = 0; i < 5; i++) {
         try {
           response = await getAI().models.generateContent({
-            model: "gemini-3.1-flash-lite-preview",
+            model: "gemini-3-flash",
             contents: [{ role: 'user', parts: [{ text: currentMessage }] }],
             config: {
               systemInstruction: systemInstruction

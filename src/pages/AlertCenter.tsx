@@ -23,9 +23,13 @@ const AlertCenter: React.FC = () => {
   const [isResolving, setIsResolving] = useState(false);
 
   useEffect(() => {
-    fetch('/api/alerts')
-      .then(res => res.json())
-      .then(data => setAlerts(data));
+    setTimeout(() => {
+      setAlerts([
+        { id: 'AL-001', type: 'Multiple GSTIN Collision', severity: 'Critical', district: 'Peenya Hub', time: '2m ago', evidence: '3 identical entities found under different PAN IDs.' },
+        { id: 'AL-002', type: 'License Expiry Prediction', severity: 'High', district: 'Mysuru', time: '1h ago', evidence: '80% probability of manufacturing license lapse for 12 units.' },
+        { id: 'AL-003', type: 'Silent Shutdown', severity: 'Medium', district: 'Hassan', time: '4h ago', evidence: 'Zero electricity consumption detected for 90 days.' }
+      ]);
+    }, 500);
   }, []);
 
   const filteredAlerts = useMemo(() => {

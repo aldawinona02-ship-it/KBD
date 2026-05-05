@@ -23,9 +23,12 @@ const GovernanceConsole: React.FC = () => {
   const [activeModule, setActiveModule] = useState('Audit Logs');
 
   useEffect(() => {
-    fetch('/api/governance/audit')
-      .then(res => res.json())
-      .then(data => setLogs(data));
+    setTimeout(() => {
+      setLogs([
+        { id: 'LOG-001', user: 'Dr. Patil', action: 'Approved Merge', target: 'UBID-KA-560001', timestamp: new Date().toISOString() },
+        { id: 'LOG-002', user: 'Officer Rao', action: 'Viewed Sensitive PII', target: 'UBID-KA-570002', timestamp: new Date().toISOString() }
+      ]);
+    }, 500);
   }, []);
 
   // Simulate Live Feed

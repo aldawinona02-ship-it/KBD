@@ -19,13 +19,24 @@ const GraphView: React.FC = () => {
   });
 
   useEffect(() => {
-    fetch('/api/graph/business/UBID-KA-560001')
-      .then(res => res.json())
-      .then(data => {
-        setNodes(data.nodes);
-        setEdges(data.edges);
-        setIsLoading(false);
-      });
+    setTimeout(() => {
+      const mockGraph = {
+        nodes: [
+          { id: '1', data: { label: 'Primary UBID' }, type: 'input', position: { x: 250, y: 5 } },
+          { id: '2', data: { label: 'Trade License' }, position: { x: 100, y: 100 } },
+          { id: '3', data: { label: 'Utility Account' }, position: { x: 400, y: 100 } },
+          { id: '4', data: { label: 'Legacy PAN Record' }, position: { x: 250, y: 200 } },
+        ],
+        edges: [
+          { id: 'e1-2', source: '1', target: '2', label: 'HAS_LICENSE' },
+          { id: 'e1-3', source: '1', target: '3', label: 'HAS_UTILITY' },
+          { id: 'e1-4', source: '1', target: '4', label: 'LINKED_CANDIDATE', animated: true },
+        ]
+      };
+      setNodes(mockGraph.nodes);
+      setEdges(mockGraph.edges);
+      setIsLoading(false);
+    }, 500);
   }, []);
 
   const filteredNodes = useMemo(() => {

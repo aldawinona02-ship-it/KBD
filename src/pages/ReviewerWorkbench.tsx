@@ -22,12 +22,14 @@ const ReviewerWorkbench: React.FC = () => {
   const [isEvidenceOpen, setIsEvidenceOpen] = useState(false);
 
   useEffect(() => {
-    fetch('/api/reviews/queue')
-      .then(res => res.json())
-      .then(data => {
-        setQueue(data);
-        if (data.length > 0) setSelectedItem(data[0]);
-      });
+    setTimeout(() => {
+      const data = [
+        { id: 'RV-101', type: 'Candidate Merge', businessA: 'Peenya Tools Ltd', businessB: 'Peenya Precision Tools', confidence: 0.94, reason: 'Name similarity + Address match' },
+        { id: 'RV-102', type: 'Cluster Split', businessA: 'Agro Exports Group', clusterSize: 5, confidence: 0.42, reason: 'Temporal ownership conflict detected' }
+      ];
+      setQueue(data);
+      if (data.length > 0) setSelectedItem(data[0]);
+    }, 500);
   }, []);
 
   const handleConfirmMerge = async () => {
