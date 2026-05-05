@@ -315,8 +315,15 @@ function Copilot() {
        console.error("Gemini Error:", error);
        const errorMessage = error.message || String(error);
        
-       // Proactive simulated fallback if API is unavailable or key is leaked
-       if (errorMessage.includes('leaked') || errorMessage.includes('403') || errorMessage.includes('404')) {
+       // Proactive simulated fallback if API is unavailable, key is leaked, or invalid
+       const isApiError = errorMessage.includes('leaked') || 
+                          errorMessage.includes('403') || 
+                          errorMessage.includes('404') ||
+                          errorMessage.includes('400') ||
+                          errorMessage.includes('not valid') ||
+                          errorMessage.includes('INVALID_ARGUMENT');
+
+       if (isApiError) {
          console.warn("KBDT: API Issue detected. Switching to Simulated Analyst Mode.");
          
          const simulatedResponses: Record<string, string> = {
